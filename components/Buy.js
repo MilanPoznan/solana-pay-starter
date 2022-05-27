@@ -1,69 +1,128 @@
-import React, { useState, useMemo } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import { Keypair, Transaction } from "@solana/web3.js";
+import { findReference, FindReferenceError } from "@solana/pay";
 import { useConnection, useWallet } from "@solana/wallet-adapter-react";
 import { InfinitySpin } from "react-loader-spinner";
 import IPFSDownload from "./IpfsDownload";
+import { addOrder, hasPurchased, fetchItem } from "../lib/api";
 
+const STATUS = {
+  Initial: "Initial",
+  Submitted: "Submitted",
+  Paid: "Paid",
+};
 
 export default function Buy({ itemID }) {
 
-  const { connection } = useConnection()
+  //Koristi Connection klasu koja (konekcija na full PRC node endpoint) is web3.js i nju spakuje u kontext ( normalan useContext iz react)
+  const { connection } = useConnection();
 
-  //Iz walle
-  const { publicKey, sendTransaction } = useWallet()
+  //
+  /**
+   * U stvari jako prosto Sve ovo isto koristi solana web3.js 
+   * sendTransaction vraca bukvalno isti kurac stavis konekciju stavis transaction i on ti vrati promise, pa ti promise vrati hash
+   */
+  const { publicKey, sendTransaction } = useWallet();
+  const orderID = useMemo(() => Keypair.generate().publicKey, []); // Public key used to identify the order
 
-  const orderID = useMemo(() => Keypair.generate().publicKey, []) // Public key used to identify the order
-
-  const [paid, setPaid] = useState(null)
-  const [loading, setLoading] = useState(false)
-
+  const [item, setItem] = useState(null); // IPFS hash & filename of the purchased item
+  const [loading, setLoading] = useState(false); // Loading state of all above
+  const [status, setStatus] = useState(STATUS.Initial); // Tracking transaction status
 
   const order = useMemo(
     () => ({
       buyer: publicKey.toString(),
       orderID: orderID.toString(),
-      itemID: itemID
+      itemID: itemID,
     }),
     [publicKey, orderID, itemID]
-  )
+  );
 
-  // Fetch the transaction object from the server 
+  // Fetch the transaction object from the server (done to avoid tampering)
   const processTransaction = async () => {
-
-    setLoading(true)
-    //Fetch data
-    const transactionResponse = await fetch('../api/createTransaction', {
+    setLoading(true);
+    const transactionResponse = await fetch("../api/createTransaction", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify(order),
-    })
+    });
+    const transactionData = await transactionResponse.json();
+    console.log('transactionData', transactionData)
+    console.log('transactionData', Buffer.from(transactionData.transaction, "base64"))
+    const tx = Transaction.from(
+      //sve jasno vrati ga u Uint8Array 
+      Buffer.from(transactionData.transaction, "base64")
+    );
+    console.log("Tx data is", tx);
 
-    //Data to json
-    const transactionData = await transactionResponse.json()
-
-    //Create transaction 
-    const orderTransaction = Transaction.from(Buffer.from(transactionData.transaction, 'base64'))
-    console.log('transaction data is: ', orderTransaction);
-
+    // Attempt to send the transaction to the network
     try {
-      const transactionHash = await sendTransaction(orderTransaction, connection)
-      console.log(`Transaction sent: https://solscan.io/tx/${transactionHash}?cluster=devnet`);
-
-      setPaid(true);
-
+      const txHash = await sendTransaction(tx, connection);
+      console.log(`Transaction sent: https://solscan.io/tx/${txHash}?cluster=devnet`);
+      setStatus(STATUS.Submitted);
     } catch (error) {
       console.error(error);
     } finally {
-      setLoading(false)
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+
+    // Proveravam da li adresa vec kupila item
+    // Ako jeste fetch item i set pait na true
+    // Async function da izbegenm blokiranje UI 
+    async function checkPurchased() {
+      const purchased = await hasPurchased(publicKey, itemID);
+      if (purchased) {
+        setStatus(STATUS.Paid);
+        const item = await fetchItem(itemID);
+        setItem(item);
+      }
+    }
+    checkPurchased();
+  }, [publicKey, itemID]);
+
+  useEffect(() => {
+    // Check if transaction was confirmed
+    if (status === STATUS.Submitted) {
+      setLoading(true);
+      const interval = setInterval(async () => {
+        try {
+          const result = await findReference(connection, orderID);
+          console.log("Finding tx reference", result.confirmationStatus);
+          if (result.confirmationStatus === "confirmed" || result.confirmationStatus === "finalized") {
+            clearInterval(interval);
+            setStatus(STATUS.Paid);
+            addOrder(order);
+            setLoading(false);
+            alert("A fala ti kralju sto si ovako lepe slike uzo!");
+          }
+        } catch (e) {
+          if (e instanceof FindReferenceError) {
+            return null;
+          }
+          console.error("Unknown error", e);
+        } finally {
+          setLoading(false);
+        }
+      }, 1000);
+      return () => {
+        clearInterval(interval);
+      };
     }
 
+    async function getItem(itemID) {
+      const item = await fetchItem(itemID);
+      setItem(item);
+    }
 
-  }
-
-
-
+    if (status === STATUS.Paid) {
+      getItem(itemID);
+    }
+  }, [status]);
 
   if (!publicKey) {
     return (
@@ -79,8 +138,9 @@ export default function Buy({ itemID }) {
 
   return (
     <div>
-      {paid ? (
-        <IPFSDownload filename="Breyta1.png" hash="QmbB6rFdK6uQaYKnZZ5r5o4w2xQFUeWoGzmmgZQ2c1VyYo" cta="Download image" />
+      {/* Display either buy button or IPFSDownload component based on if Hash exists */}
+      {item ? (
+        <IPFSDownload hash={item.hash} filename={item.filename} />
       ) : (
         <button disabled={loading} className="buy-button" onClick={processTransaction}>
           Buy now 🠚

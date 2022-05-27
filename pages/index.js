@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
-import HeadComponent from '../components/Head';
-
+import CreateProduct from "../components/CreateProduct";
 
 import { PublicKey } from '@solana/web3.js';
 import { useWallet } from '@solana/wallet-adapter-react';
@@ -16,7 +15,10 @@ const App = () => {
   //ovaj hook daje nam adresu kontektovanog usera bilo gde u app, zato sam morao da ga premetim iz child u HOC  jebo mi pas mater
   const { publicKey } = useWallet()
 
+  const isOwner = (publicKey ? publicKey.toString() === process.env.NEXT_PUBLIC_OWNER_PUBLIC_KEY : false);
+
   const [products, setProducts] = useState([]);
+  const [creating, setCreating] = useState(false);
 
   const renderNotConnectedContainer = () => (
     <div>
@@ -55,10 +57,19 @@ const App = () => {
         <header className="header-container">
           <p className="header"> 😳 Buildspace Emoji Store 😈</p>
           <p className="sub-text">The only emoji store that accepts shitcoins</p>
+
+          {isOwner && (
+            <button className="create-product-button" onClick={() => setCreating(!creating)}>
+              {creating ? "Close" : "Create Product"}
+            </button>
+          )}
         </header>
 
         <main>
           {/* We only render the connect button if public key doesn't exist */}
+
+          {creating && <CreateProduct />}
+
           {publicKey ? renderItemBuyContainer() : renderNotConnectedContainer()}
 
         </main>

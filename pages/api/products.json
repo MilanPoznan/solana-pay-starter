@@ -4,8 +4,26 @@
     "name": "Breyta1",
     "price": "0.1",
     "description": "Get this fire image pack for only $0.1!!!",
-    "image_url": "https://i.ytimg.com/vi/1iRIMcIoukQ/hqdefault.jpg",
+    "image_url": "https://thumbs.dreamstime.com/z/sticker-cartoon-question-mark-creative-illustrated-149241670.jpg",
     "filename": "Breyta1",
     "hash": "QmbB6rFdK6uQaYKnZZ5r5o4w2xQFUeWoGzmmgZQ2c1VyYo"
+  },
+  {
+    "id": 2,
+    "name": "eraibora",
+    "price": "0.5",
+    "description": "Get this fire image pack for only $0.5!!!",
+    "image_url": "https://thumbs.dreamstime.com/z/sticker-cartoon-question-mark-creative-illustrated-149241670.jpg",
+    "filename": "era",
+    "hash": "QmTTcx1Z86qQgt4fyT7WwskaXi99FYYfb1a6HFv55JBMdZ"
+  },
+  {
+    "id": 3,
+    "name": "Breyta2",
+    "price": "0.5",
+    "description": "Get this fire image pack for only $0.5!!!",
+    "image_url": "https://thumbs.dreamstime.com/z/sticker-cartoon-question-mark-creative-illustrated-149241670.jpg",
+    "filename": "Breyta2",
+    "hash": "QmTm3g8Tq59SG6TuS3oZSwX2YW8F6iGomeZxSp8Kftx7Q8"
   }
 ]
