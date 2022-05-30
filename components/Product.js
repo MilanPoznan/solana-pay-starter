@@ -1,9 +1,8 @@
 import React from "react";
-import styles from "../styles/Product.module.css";
 import Buy from './Buy';
+import styles from "../styles/Product.module.css";
 
 export default function Product({ product }) {
-  console.log(product)
 
   const { id, name, price, description, image_url } = product;
 
@@ -21,7 +20,6 @@ export default function Product({ product }) {
 
         <div className={styles.product_action}>
           <div className={styles.product_price}>{price} USDC</div>
-          {/* I'm hardcoding these for now, we'll fetch the hash from the API later*/}
           <Buy itemID={id} />
         </div>
       </div>

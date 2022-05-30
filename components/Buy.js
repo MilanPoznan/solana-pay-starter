@@ -17,13 +17,12 @@ export default function Buy({ itemID }) {
   //Koristi Connection klasu koja (konekcija na full PRC node endpoint) is web3.js i nju spakuje u kontext ( normalan useContext iz react)
   const { connection } = useConnection();
 
-  //
   /**
    * U stvari jako prosto Sve ovo isto koristi solana web3.js 
    * sendTransaction vraca bukvalno isti kurac stavis konekciju stavis transaction i on ti vrati promise, pa ti promise vrati hash
    */
   const { publicKey, sendTransaction } = useWallet();
-  const orderID = useMemo(() => Keypair.generate().publicKey, []); // Public key used to identify the order
+  const orderID = useMemo(() => Keypair.generate().publicKey, []); // Public key koji koristim da identifikujem order
 
   const [item, setItem] = useState(null); // IPFS hash & filename of the purchased item
   const [loading, setLoading] = useState(false); // Loading state of all above

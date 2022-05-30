@@ -32,10 +32,8 @@ const App = () => {
   const renderItemBuyContainer = () => (
     <div className="products-container">
       {products.map((product) => {
-        console.log(product)
-
         return (
-          < Product key={product.id} product={product} />
+          <Product key={product.id} product={product} />
         )
       })}
     </div>
@@ -55,8 +53,8 @@ const App = () => {
     <div className="App">
       <div className="container">
         <header className="header-container">
-          <p className="header"> 😳 Buildspace Emoji Store 😈</p>
-          <p className="sub-text">The only emoji store that accepts shitcoins</p>
+          <p className="header"> Kupi dobru sliku brate moj </p>
+          <p className="sub-text">Jedina prodavnica koja prihvata shitcoins</p>
 
           {isOwner && (
             <button className="create-product-button" onClick={() => setCreating(!creating)}>

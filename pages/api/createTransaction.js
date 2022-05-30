@@ -4,7 +4,7 @@ import { createTransferCheckedInstruction, getAssociatedTokenAddress, getMint } 
 import BigNumber from "bignumber.js";
 import products from "./products.json";
 
-
+//Token adresa
 const usdcAddress = new PublicKey("Gh9ZwEmdLJ8DscKNTkTqPbNwLNNBjuSzaG9Vp2KGtKJr");
 
 const sellerAddress = 'C7URT9hDmKYUHLZGzhvZLp71a6DvVCvfQaUxpmZrtTwU'
@@ -46,7 +46,7 @@ const createTransaction = async (req, res) => {
     const buyerUsdcAddress = await getAssociatedTokenAddress(usdcAddress, buyerPublicKey);
     const shopUsdcAddress = await getAssociatedTokenAddress(usdcAddress, sellerPublicKey);
 
-    // A blockhash is sort of like an ID for a block. It lets you identify each block.
+    //blockhash je u principu ID za blok, dozvoljava da se blok identifikuje
     const { blockhash } = await connection.getLatestBlockhash("finalized");
 
 
@@ -56,13 +56,13 @@ const createTransaction = async (req, res) => {
 
     console.log('usdcMint', usdcMint)
 
-
-    // const transaction = new Transaction({
-    //   recentBlockhash: blockhash,
+    // const transaction = new TransactionBlockhashCtor({
+    //   blockhash: blockhash,
     //   feePayer: buyerPublicKey
     // })
 
 
+    //Transakcija je depricated, iznad je primer kako se radi sa TransactionBlockhashCtor, bukvalno isti kurac
     const transaction = new Transaction({
       recentBlockhash: blockhash,
       feePayer: buyerPublicKey
@@ -70,7 +70,6 @@ const createTransaction = async (req, res) => {
 
 
     // ============ USDC =============
-
 
     /**
      * Vraca TransactionSignature 
@@ -121,6 +120,7 @@ const createTransaction = async (req, res) => {
     const serializedTransaction = transaction.serialize({
       requireAllSignatures: false,
     })
+
     //Prevodim je u razumljiv format
     const base64 = serializedTransaction.toString("base64");
 

@@ -1,6 +1,6 @@
-# buildspace Store on Solana Pay Project
+# Demo Solana Pay Project
 
-### **Welcome 👋**
+### **Welcome/Start 👋**
 
 To get started with this project, clone this repo and follow these commands:
 
@@ -8,8 +8,13 @@ To get started with this project, clone this repo and follow these commands:
 2. Run `npm run dev` to start the project
 3. Start coding!
 
-### What is the `.vscode` Folder?
-If you use VSCode to build your app, we included a list of suggested extensions that will help you build this project! Once you open this project in VSCode, you will see a popup asking if you want to download the recommended extensions :).
+### Da bi bilo razumljivije pisacu na srpskom?
+Nista krenite od pages _app tu se renderuje index.js pa dalje komponentu po komponentu
+
+-- **Components** folder sadrzi komponente 
+-- **Hooks** sadrzi IPFS hook
+---- IPFS je P2P hypermedia protokol, u principu BC storage ( ako nekome nije jasno sta je neka pita ) 
+-- pages/api privid api-ja, ja sve upisujem u json fajlove.
 
 ### **Questions?**
 Have some questions make sure you head over to your [buildspace Dashboard](https://app.buildspace.so/) and link your Discord account so you can get access to helpful channels teaching assistants, and your instructor!

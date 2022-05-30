@@ -18,6 +18,7 @@ function get(req, res) {
 
 
 //add to json
+//If something not clear feel free to ping me
 async function post(req, res) {
 
   console.log("Received add order request", req.body);
