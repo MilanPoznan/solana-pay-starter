@@ -7,7 +7,8 @@ import products from "./products.json";
 //Token adresa
 const usdcAddress = new PublicKey("Gh9ZwEmdLJ8DscKNTkTqPbNwLNNBjuSzaG9Vp2KGtKJr");
 
-const sellerAddress = 'C7URT9hDmKYUHLZGzhvZLp71a6DvVCvfQaUxpmZrtTwU'
+
+const sellerAddress = process.env.NEXT_PUBLIC_OWNER_PUBLIC_KEY
 const sellerPublicKey = new PublicKey(sellerAddress);
 
 

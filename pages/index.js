@@ -49,6 +49,7 @@ const App = () => {
         })
     }
   }, [publicKey])
+
   return (
     <div className="App">
       <div className="container">
